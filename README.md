@@ -1,173 +1,132 @@
-#!/bin/bash
+AI-Powered Resume Ranker
+This project evaluates the effectiveness of NLP techniques in ranking resumes based on their relevance to a job description. Built with Streamlit, PyPDF2, and custom NLP implementations in Python, the system allows users to upload resume PDFs and input job descriptions to receive a real-time relevance analysis.
 
-echo "# AI-Powered Resume Ranker"
-echo ""
-echo "## Project Overview"
-echo ""
-echo "The AI-Powered Resume Ranker is a Streamlit web application designed to help recruiters and hiring managers efficiently identify the most relevant candidates for a given job description. It leverages fundamental Natural Language Processing (NLP) techniques, specifically TF-IDF (Term Frequency-Inverse Document Frequency) and Cosine Similarity, to quantify the textual similarity between a job description and multiple resume PDFs."
-echo ""
-echo "This project demonstrates an end-to-end AI/ML application, from text preprocessing and feature extraction to similarity calculation and interactive visualization, all within a user-friendly Python-based web interface."
-echo ""
-echo "## Features"
-echo ""
-echo "* **PDF Resume Upload:** Directly upload multiple resume PDF files. The application automatically extracts text from the PDFs for analysis."
-echo ""
-echo "* **Job Description Input:** Paste or load a sample job description to serve as the target for ranking."
-echo ""
-echo "* **TF-IDF & Cosine Similarity:** Employs industry-standard NLP algorithms to create numerical representations of text and calculate their semantic closeness."
-echo ""
-echo "* **Ranked Results:** Displays uploaded resumes sorted by their relevance score (percentage match) to the job description, from highest to lowest."
-echo ""
-echo "* **Interactive UI:** Built with Streamlit for a simple and intuitive web-based user experience."
-echo ""
-echo "* **Sample Data:** Includes a sample job description for quick testing and demonstration."
-echo ""
-echo "* **Responsive Design:** Adapts to different screen sizes, providing a good experience on various devices."
-echo ""
-echo "## How it Works"
-echo ""
-echo "1. **Job Description Input:** You provide the job description text. This acts as the query document."
-echo ""
-echo "2. **Resume Uploads:** You upload one or more resume PDFs."
-echo ""
-echo "3. **Text Extraction:** For each uploaded PDF, the application uses \`PyPDF2\` to extract all readable text content."
-echo ""
-echo "4. **Text Preprocessing:** Both the job description and the extracted resume texts undergo a basic preprocessing step:"
-echo ""
-echo "   * Conversion to lowercase."
-echo ""
-echo "   * Removal of non-alphanumeric characters."
-echo ""
-echo "   * Tokenization (splitting text into individual words)."
-echo ""
-echo "5. **TF-IDF (Term Frequency-Inverse Document Frequency) Calculation:**"
-echo ""
-echo "   * **Term Frequency (TF):** Measures how frequently a term appears in a document."
-echo ""
-echo "   * **Inverse Document Frequency (IDF):** Measures how important a term is across the entire collection of documents (job description + all resumes). Common words (like \"the\", \"a\") get lower IDF, while unique, domain-specific terms get higher IDF."
-echo ""
-echo "   * TF-IDF combines these two, giving a weight to each word, reflecting its importance in a specific document relative to the entire corpus."
-echo ""
-echo "6. **Vector Representation:** Each document (job description and resumes) is transformed into a numerical vector based on its TF-IDF scores for all words in the vocabulary."
-echo ""
-echo "7. **Cosine Similarity:** The cosine similarity is calculated between the job description's TF-IDF vector and each resume's TF-IDF vector. This metric measures the cosine of the angle between two vectors, ranging from 0 (no similarity) to 1 (perfect similarity)."
-echo ""
-echo "8. **Ranking:** Resumes are then ranked and displayed based on their cosine similarity score, with higher scores indicating a better match."
-echo ""
-echo "## Technologies Used"
-echo ""
-echo "* **Python 3.11** (Recommended for compatibility)"
-echo ""
-echo "* **Streamlit:** For building the interactive web application."
-echo ""
-echo "* **PyPDF2:** For extracting text from PDF documents."
-echo ""
-echo "* **NumPy:** Essential for numerical operations and vector calculations."
-echo ""
-echo "* **Standard Python Libraries:** \`math\`, \`collections\`, \`io\`."
-echo ""
-echo "## Setup and Installation (Local)"
-echo ""
-echo "Follow these steps to get the application running on your local machine:"
-echo ""
-echo "1. **Ensure Python 3.11 is Installed:**"
-echo ""
-echo "   * **Important:** Using Python 3.11 is highly recommended to avoid common dependency conflicts with \`numpy\` and other packages on Windows. If you have Python 3.12/3.13 and encounter installation issues, consider uninstalling it and installing 3.11."
-echo ""
-echo "   * Download Python 3.11.x from [python.org](https://www.python.org/downloads/windows/)."
-echo ""
-echo "   * During installation, **make sure to check the box \"Add Python 3.11 to PATH\"**."
-echo ""
-echo "2. **Disable Python App Execution Aliases (Windows Specific):**"
-echo ""
-echo "   * Go to Windows \`Settings\` > \`Apps\` > \`App execution aliases\`."
-echo ""
-echo "   * Turn \`Off\` the aliases for \`python.exe\` and \`python3.exe\`."
-echo ""
-echo "   * Close all terminal windows after doing this."
-echo ""
-echo "3. **Create Project Directory & Files:**"
-echo ""
-echo "   * Create a new folder (e.g., \`Resume_Ranker\`) on your system."
-echo ""
-echo "   * Save the \`resume_ranker_app.py\` file inside this folder."
-echo ""
-echo "   * Create a file named \`requirements.txt\` inside the same folder and add the following content:"
-echo ""
-echo "     \`\`\`"
-echo "     streamlit==1.33.0"
-echo "     PyPDF2==3.0.1"
-echo "     numpy==1.22.4"
-echo "     "
-echo "     \`\`\`"
-echo ""
-echo "4. **Open Terminal/PowerShell and Navigate:**"
-echo ""
-echo "   * Open a new Terminal or PowerShell window."
-echo ""
-echo "   * Navigate to your project directory:"
-echo ""
-echo "     \`\`\`"
-echo "     cd D:\\Resume_Ranker"
-echo "     "
-echo "     \`\`\`"
-echo ""
-echo "     (Replace \`D:\\Resume_Ranker\` with your actual path)"
-echo ""
-echo "5. **Create a Virtual Environment:**"
-echo ""
-echo "   * It's highly recommended to use a virtual environment to manage dependencies."
-echo ""
-echo "     \`\`\`"
-echo "     python -m venv venv"
-echo "     "
-echo "     \`\`\`"
-echo ""
-echo "6. **Activate the Virtual Environment:**"
-echo ""
-echo "   * **On Windows (PowerShell):**"
-echo ""
-echo "     \`\`\`"
-echo "     .\\venv\\Scripts\\Activate.ps1"
-echo "     "
-echo "     \`\`\`"
-echo ""
-echo "   * **On Windows (Command Prompt/CMD):**"
-echo ""
-echo "     \`\`\`"
-echo "     venv\\Scripts\\activate.bat"
-echo "     "
-echo "     \`\`\`"
-echo ""
-echo "   * Your terminal prompt will change to show \`(venv)\` at the beginning, indicating the environment is active."
-echo ""
-echo "7. **Install Dependencies:**"
-echo ""
-echo "   * With the virtual environment activated, install the required libraries:"
-echo ""
-echo "     \`\`\`"
-echo "     pip install --no-cache-dir -r requirements.txt"
-echo "     "
-echo "     \`\`\`"
-echo ""
-echo "     This step might take a few moments. Ensure there are no major errors."
-echo ""
-echo "8. **Run the Streamlit Application:**"
-echo ""
-echo "   * Once the installation is complete, run the application:"
-echo ""
-echo "     \`\`\`"
-echo "     python -m streamlit run resume_ranker_app.py"
-echo "     "
-echo "     \`\`\`"
-echo ""
-echo "   * This command will open a new tab in your default web browser, displaying the AI-Powered Resume Ranker app."
-echo ""
-echo "## About the Author"
-echo ""
-echo "* **Name:** Pushkar Kumar"
-echo ""
-echo "* **Email:** hacker.boss.pk@gmail.com"
-echo ""
-echo "This project was developed as a hands-on demonstration of applying NLP and basic machine learning principles to a practical problem in talent acquisition. It showcases skills in Python programming, fundamental NLP algorithms, and building interactive web applications with Streamlit."
-echo ""
+Project Objective
+To develop a Streamlit web application that efficiently ranks uploaded resume PDFs against a given job description, leveraging fundamental NLP algorithms (TF-IDF and Cosine Similarity) to quantify textual similarity for talent acquisition.
+
+Key Components / Input Processing Flow
+Component
+
+Description
+
+Technologies/Algorithms
+
+Job Description Input
+
+User provides the target job description text.
+
+Streamlit st.text_area
+
+Resume PDF Uploads
+
+Users upload multiple resume PDF files for analysis.
+
+Streamlit st.file_uploader
+
+Text Extraction
+
+Extracts raw text content from the uploaded PDF documents.
+
+PyPDF2
+
+Text Preprocessing
+
+Cleans and tokenizes text (lowercase conversion, non-alphanumeric removal).
+
+Python (string methods, regex)
+
+TF-IDF Calculation
+
+Quantifies the importance of terms within documents relative to the corpus.
+
+Custom Python implementation
+
+Vector Representation
+
+Transforms processed texts into numerical vectors based on TF-IDF scores.
+
+NumPy, Custom Python implementation
+
+Cosine Similarity
+
+Measures the textual similarity between job description and resume vectors.
+
+Custom Python implementation
+
+Ranked Results Display
+
+Presents resumes sorted by their calculated relevance score.
+
+Streamlit st.expander, st.write
+
+Tech Stack
+Frontend: Streamlit
+
+Backend & ML Core: Python, NumPy
+
+PDF Processing: PyPDF2
+
+NLP Algorithms: TF-IDF, Cosine Similarity
+
+Standard Python Modules: math, collections, io
+
+How To Run the Project
+Follow these steps to set up and run the application on your local machine.
+
+# Step 1: Navigate to your project directory (replace with your actual path)
+cd D:\Resume_Ranker
+
+# Step 2: Create a Virtual Environment
+python -m venv venv
+
+# Step 3: Activate the Virtual Environment
+# On Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# On Windows (Command Prompt/CMD):
+# venv\Scripts\activate.bat
+# On macOS/Linux/Git Bash:
+# source venv/bin/activate
+
+# Step 4: Install All Required Python Packages (ensure requirements.txt is correct)
+pip install --no-cache-dir -r requirements.txt
+
+# Step 5: Run the Streamlit App
+python -m streamlit run resume_ranker_app.py
+
+Project Structure
+For this version, the project follows a simplified structure with core logic within a single application file:
+
+resume_ranker/
+│
+├── resume_ranker_app.py  # Main Streamlit application with all logic
+└── requirements.txt      # Python dependencies
+
+Future Improvements
+Advanced NLP Integration: Incorporate libraries like SpaCy or Hugging Face Transformers for more sophisticated parsing, named entity recognition, and semantic similarity, potentially leading to more accurate rankings.
+
+Robust Text Extraction: Enhance PDF text extraction to better handle complex layouts, tables, and images.
+
+User Authentication & Data Persistence: Implement a backend (e.g., Firebase Firestore) to allow users to save job descriptions, uploaded resumes, and past ranking results.
+
+Keyword Highlighting: Visually highlight key matching terms or skills within the ranked resumes to provide immediate insights.
+
+Alternative Ranking Models: Explore other machine learning models or ensemble techniques for ranking beyond basic TF-IDF and Cosine Similarity.
+
+Dockerization: Containerize the application using Docker for easier deployment and environment consistency.
+
+License
+This project is open-source and licensed under the MIT License.
+
+Author
+Pushkar Kumar
+AI/ML Research Enthusiast
+Email: hacker.boss.pk@gmail.com
+
+Acknowledgments
+Streamlit: For providing an excellent framework for building interactive Python web applications.
+
+PyPDF2: For enabling robust PDF text extraction.
+
+NumPy: For providing essential numerical computing capabilities.
+
+The NLP Community: For the foundational concepts of TF-IDF and Cosine Similarity.
