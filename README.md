@@ -83,9 +83,9 @@ python -m venv venv
 # On Windows (PowerShell):
 .\venv\Scripts\Activate.ps1
 # On Windows (Command Prompt/CMD):
-# venv\Scripts\activate.bat
+ venv\Scripts\activate.bat
 # On macOS/Linux/Git Bash:
-# source venv/bin/activate
+ source venv/bin/activate
 
 # Step 4: Install All Required Python Packages (ensure requirements.txt is correct)
 pip install --no-cache-dir -r requirements.txt
@@ -93,7 +93,7 @@ pip install --no-cache-dir -r requirements.txt
 # Step 5: Run the Streamlit App
 python -m streamlit run resume_ranker_app.py
 
-Project Structure
+# Project Structure
 For this version, the project follows a simplified structure with core logic within a single application file:
 
 resume_ranker/
@@ -101,7 +101,7 @@ resume_ranker/
 ├── resume_ranker_app.py  # Main Streamlit application with all logic
 └── requirements.txt      # Python dependencies
 
-Future Improvements
+# Future Improvements
 Advanced NLP Integration: Incorporate libraries like SpaCy or Hugging Face Transformers for more sophisticated parsing, named entity recognition, and semantic similarity, potentially leading to more accurate rankings.
 
 Robust Text Extraction: Enhance PDF text extraction to better handle complex layouts, tables, and images.
@@ -114,15 +114,15 @@ Alternative Ranking Models: Explore other machine learning models or ensemble te
 
 Dockerization: Containerize the application using Docker for easier deployment and environment consistency.
 
-License
-This project is open-source and licensed under the MIT License.
 
-Author
+# Author
 Pushkar Kumar
 AI/ML Research Enthusiast
 Email: hacker.boss.pk@gmail.com
 
-Acknowledgments
+# Acknowledgments
+
+
 Streamlit: For providing an excellent framework for building interactive Python web applications.
 
 PyPDF2: For enabling robust PDF text extraction.
